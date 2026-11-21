@@ -80,4 +80,35 @@ class GSendClientTest extends TestCase
             'custom_content' => 'Hi',
         ]);
     }
+
+    public function test_it_creates_attachment_from_raw_data(): void
+    {
+        $attachment = GSendClient::createAttachmentFromData(
+            data: 'Hello World Attachment',
+            filename: 'test.txt',
+            contentType: 'text/plain'
+        );
+
+        $this->assertSame('test.txt', $attachment['filename']);
+        $this->assertSame('text/plain', $attachment['content_type']);
+        $this->assertSame(base64_encode('Hello World Attachment'), $attachment['content']);
+    }
+
+    public function test_it_creates_attachment_from_file(): void
+    {
+        $tempFile = tempnam(sys_get_temp_dir(), 'gsend_test_');
+        file_put_contents($tempFile, 'Sample content in temp file');
+
+        try {
+            $attachment = GSendClient::createAttachment($tempFile, 'custom-name.txt');
+
+            $this->assertSame('custom-name.txt', $attachment['filename']);
+            $this->assertNotEmpty($attachment['content_type']);
+            $this->assertSame(base64_encode('Sample content in temp file'), $attachment['content']);
+        } finally {
+            if (file_exists($tempFile)) {
+                unlink($tempFile);
+            }
+        }
+    }
 }

@@ -102,26 +102,50 @@ return [
 
 ### 4. Sending Mail in Laravel
 
-Send emails using standard Laravel mailables or notifications:
+#### Using Laravel Mailables (with Attachments)
+
+Send emails using standard Laravel mailables or notifications. Attachments added via `attach()` or `attachFromStorage()` are automatically extracted, base64-encoded, and sent via gSend:
 
 ```php
 use Illuminate\Support\Facades\Mail;
-use App\Mail\WelcomeEmail;
+use App\Mail\InvoiceMail;
 
-Mail::to('user@example.com')->send(new WelcomeEmail());
+Mail::to('user@example.com')->send(new InvoiceMail());
 ```
 
-Or using the `GSend` Facade for direct sending:
+Or via inline `Mail::send()`:
+
+```php
+use Illuminate\Support\Facades\Mail;
+
+Mail::send([], [], function ($message) {
+    $message->to('user@example.com')
+            ->subject('Monthly Statement')
+            ->html('<h1>Your statement is ready</h1>')
+            ->attach('/path/to/statement.pdf');
+});
+```
+
+#### Using the `GSend` Facade
+
+For fast, direct sending without mailables:
 
 ```php
 use Glofora\GSend\Facades\GSend;
+use Glofora\GSend\GSendClient;
 
-$result = GSend::sendMail(
+$response = GSend::sendMail(
     to: 'customer@example.com',
     subject: 'Order Confirmation',
     content: '<h1>Your order is confirmed!</h1>',
-    fromName: 'Glofora Store'
+    fromName: 'Glofora Store',
+    attachments: [
+        GSendClient::createAttachment('/path/to/invoice.pdf'),
+    ]
 );
+
+// Access response details from gSend API:
+$logId = $response['log_id'] ?? null;
 ```
 
 ---
@@ -187,19 +211,82 @@ $response = $client->send([
 
 ---
 
-## Attachments Format
+## Attachments Support
 
-Attachments are automatically formatted and encoded when sent through Symfony Mailer or Laravel Mailables.
+**Yes! Sending email attachments is fully supported** across all transport modes.
 
-When building raw payloads manually for `GSendClient::send()`:
+### 1. In Laravel Mailables / Mail Notifications
+When using standard Laravel mail, attach files normally. `GSendTransport` automatically converts them into the base64 format required by the gSend API:
 
 ```php
-[
-    'filename' => 'contract.pdf',
-    'content_type' => 'application/pdf',
-    'content' => base64_encode($fileBytes),
-]
+// In a Mailable's attachments() method (Laravel 9+ / 10+ / 11+ / 12+):
+public function attachments(): array
+{
+    return [
+        \Illuminate\Mail\Mailables\Attachment::fromPath('/path/to/invoice.pdf')
+            ->as('invoice.pdf')
+            ->withMime('application/pdf'),
+    ];
+}
+
+// Or in older Mailable build() method:
+public function build()
+{
+    return $this->view('emails.invoice')
+        ->attach('/path/to/invoice.pdf');
+}
 ```
+
+### 2. Using `GSendClient` Helper Methods
+Use built-in helper methods `createAttachment()` or `createAttachmentFromData()`:
+
+```php
+use Glofora\GSend\Facades\GSend;
+use Glofora\GSend\GSendClient;
+
+$response = GSend::sendMail(
+    to: 'customer@example.com',
+    subject: 'Your Documents',
+    content: '<p>Attached are your documents.</p>',
+    fromName: 'Glofora Support',
+    attachments: [
+        // From file path (MIME type detected automatically)
+        GSendClient::createAttachment(storage_path('app/invoice.pdf'), 'invoice.pdf'),
+
+        // Or directly from raw string/binary data:
+        GSendClient::createAttachmentFromData(
+            data: $generatedPdfBytes,
+            filename: 'statement.pdf',
+            contentType: 'application/pdf'
+        ),
+    ]
+);
+
+// Response contains the delivery status and log_id:
+// ['success' => true, 'log_id' => 12345, ...]
+$logId = $response['log_id'] ?? null;
+```
+
+### 3. Raw REST API Payload Format
+If you are assembling raw payload arrays for `GSendClient::send()` or interacting with the API directly:
+
+```json
+{
+  "to": "recipient@example.com",
+  "from_name": "Yink",
+  "subject": "Direct Custom Mail Notice",
+  "custom_content": "<h1>Direct Notification</h1><p>This is raw HTML content.</p>",
+  "attachments": [
+    {
+      "filename": "invoice.pdf",
+      "content_type": "application/pdf",
+      "content": "JVBERi0xLjQKJ..."
+    }
+  ]
+}
+```
+
+When no attachments are needed, `attachments` can be left empty (`[]`).
 
 ---
 

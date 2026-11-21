@@ -90,6 +90,50 @@ class GSendClient implements GSendClientInterface
     }
 
     /**
+     * Helper to build a valid attachment array from a local file path.
+     *
+     * @param  string  $filePath
+     * @param  string|null  $filename
+     * @param  string|null  $contentType
+     * @return array{filename: string, content_type: string, content: string}
+     *
+     * @throws GSendException
+     */
+    public static function createAttachment(string $filePath, ?string $filename = null, ?string $contentType = null): array
+    {
+        if (! file_exists($filePath) || ! is_readable($filePath)) {
+            throw new GSendException("[gSend] Attachment file not found or unreadable: {$filePath}");
+        }
+
+        $content = file_get_contents($filePath);
+        if ($content === false) {
+            throw new GSendException("[gSend] Failed to read attachment file: {$filePath}");
+        }
+
+        $filename ??= basename($filePath);
+        $contentType ??= (function_exists('mime_content_type') ? @mime_content_type($filePath) : false) ?: 'application/octet-stream';
+
+        return self::createAttachmentFromData($content, $filename, $contentType);
+    }
+
+    /**
+     * Helper to build a valid attachment array from raw binary or text string data.
+     *
+     * @param  string  $data
+     * @param  string  $filename
+     * @param  string  $contentType
+     * @return array{filename: string, content_type: string, content: string}
+     */
+    public static function createAttachmentFromData(string $data, string $filename, string $contentType = 'application/octet-stream'): array
+    {
+        return [
+            'filename' => $filename,
+            'content_type' => $contentType,
+            'content' => base64_encode($data),
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isSimulated(): bool
