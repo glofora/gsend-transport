@@ -3,7 +3,6 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/glofora/gsend-transport.svg?style=flat-square)](https://packagist.org/packages/glofora/gsend-transport)
 [![Total Downloads](https://img.shields.io/packagist/dt/glofora/gsend-transport.svg?style=flat-square)](https://packagist.org/packages/glofora/gsend-transport)
 [![PHP Version](https://img.shields.io/packagist/dependency-v/glofora/gsend-transport/php?style=flat-square)](https://packagist.org/packages/glofora/gsend-transport)
-[![Tests](https://github.com/glofora/gsend-transport/actions/workflows/run-tests.yml/badge.svg)](https://github.com/glofora/gsend-transport/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.md)
 
 A mail transport driver and standalone client for sending emails through the **gSend** REST API (`https://gsend.glofora.com/api/v1/send-mail`).
