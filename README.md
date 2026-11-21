@@ -1,12 +1,14 @@
 # gSend Mail Transport for Laravel & PHP
 
-[![Tests](https://github.com/glofora/gsend-transport/actions/workflows/run-tests.yml/badge.svg)](https://github.com/glofora/gsend-transport/actions)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/glofora/gsend-transport.svg?style=flat-square)](https://packagist.org/packages/glofora/gsend-transport)
+[![Total Downloads](https://img.shields.io/packagist/dt/glofora/gsend-transport.svg?style=flat-square)](https://packagist.org/packages/glofora/gsend-transport)
+[![PHP Version](https://img.shields.io/packagist/dependency-v/glofora/gsend-transport/php?style=flat-square)](https://packagist.org/packages/glofora/gsend-transport)
+[![Tests](https://github.com/glofora/gsend-transport/actions/workflows/run-tests.yml/badge.svg)](https://github.com/glofora/gsend-transport/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.md)
 
 A mail transport driver and standalone client for sending emails through the **gSend** REST API (`https://gsend.glofora.com/api/v1/send-mail`).
 
-Designed for **Laravel** (9.x, 10.x, 11.x, 12.x) and **pure PHP** / **Symfony Mailer** applications.
+Official Packagist Package: [packagist.org/packages/glofora/gsend-transport](https://packagist.org/packages/glofora/gsend-transport)
 
 ---
 
@@ -31,7 +33,7 @@ Designed for **Laravel** (9.x, 10.x, 11.x, 12.x) and **pure PHP** / **Symfony Ma
 
 ## Installation
 
-Install the package via Composer:
+Install the package via [Packagist](https://packagist.org/packages/glofora/gsend-transport) using Composer:
 
 ```bash
 composer require glofora/gsend-transport
