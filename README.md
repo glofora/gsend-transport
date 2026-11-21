@@ -7,7 +7,19 @@
 
 A mail transport driver and standalone client for sending emails through the **gSend** REST API (`https://gsend.glofora.com/api/v1/send-mail`).
 
-Official Packagist Package: [packagist.org/packages/glofora/gsend-transport](https://packagist.org/packages/glofora/gsend-transport)
+- **Official Website & Dashboard**: [https://gsend.glofora.com/](https://gsend.glofora.com/)
+- **Packagist Package**: [glofora/gsend-transport](https://packagist.org/packages/glofora/gsend-transport)
+
+---
+
+## Getting Your API Key
+
+To send emails using this package, you need a gSend account and API key:
+
+1. **Sign Up / Log In**: Visit [https://gsend.glofora.com/](https://gsend.glofora.com/) to register or sign in to your dashboard.
+2. **Generate API Key**: Head to your account settings or API section to generate your unique `GSEND_API_KEY`.
+3. **Verify Sender Domain**: Configure and verify your sender domain/email on the dashboard to ensure optimal deliverability.
+4. **Endpoint**: The standard mail API endpoint is `https://gsend.glofora.com/api/v1/send-mail`.
 
 ---
 
@@ -44,7 +56,7 @@ composer require glofora/gsend-transport
 
 ### 1. Environment Variables
 
-Add your gSend credentials to your `.env` file:
+Add your gSend credentials from [https://gsend.glofora.com/](https://gsend.glofora.com/) to your `.env` file:
 
 ```dotenv
 MAIL_MAILER=gsend
